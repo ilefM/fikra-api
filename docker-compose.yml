@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15.3
+    container_name: fikra_db
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=fikrauser
+      - POSTGRES_PASSWORD=fikrapassword
+      - POSTGRES_DB=fikra
+
+volumes:
+  postgres_data:
+    name: postgres_data
