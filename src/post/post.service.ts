@@ -8,4 +8,12 @@ export class PostService {
   async getAllPosts() {
     return await this.prismaService.post.findMany();
   }
+
+  async getPostById(postId: string) {
+    return await this.prismaService.post.findFirst({
+      where: {
+        id: postId,
+      },
+    });
+  }
 }
