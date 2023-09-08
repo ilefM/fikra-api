@@ -11,8 +11,8 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  author    String   @unique
+  author    String
   content   String
 }
