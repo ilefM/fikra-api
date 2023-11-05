@@ -10,7 +10,9 @@ export class PostService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllPosts() {
-    const posts = await this.prismaService.post.findMany();
+    const posts = await this.prismaService.post.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
 
     return posts;
   }
