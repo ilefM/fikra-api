@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -17,12 +18,19 @@ export class PostController {
 
   @Get()
   getAllPosts() {
-    return this.postServices.getAllPosts();
+    const posts = this.postServices.getAllPosts();
+    return posts;
   }
 
   @Get('/:id')
   getPostById(@Param('id') postId: string) {
-    return this.postServices.getPostById(postId);
+    const post = this.postServices.getPostById(postId);
+
+    if (!post) {
+      throw new NotFoundException("This post doesn't exist");
+    }
+
+    return post;
   }
 
   @Post()
