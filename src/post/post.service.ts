@@ -12,6 +12,11 @@ export class PostService {
   async getAllPosts() {
     const posts = await this.prismaService.post.findMany({
       orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        author: true,
+        content: true,
+      },
     });
 
     return posts;
