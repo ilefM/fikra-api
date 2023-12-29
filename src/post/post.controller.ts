@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,28 +13,27 @@ import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('/posts')
 export class PostController {
-  constructor(private readonly postServices: PostService) {}
+  constructor(private readonly postService: PostService) {}
 
   @Get()
   getAllPosts() {
-    const posts = this.postServices.getAllPosts();
+    const posts = this.postService.getAllPosts();
+
     return posts;
   }
 
   @Get('/:id')
   getPostById(@Param('id') postId: string) {
-    const post = this.postServices.getPostById(postId);
-
-    if (!post) {
-      throw new NotFoundException("This post doesn't exist");
-    }
+    const post = this.postService.getPostById(postId);
 
     return post;
   }
 
   @Post()
   createPost(@Body() createPostDto: CreatePostDto) {
-    return this.postServices.createPost(createPostDto);
+    const post = this.postService.createPost(createPostDto);
+
+    return post;
   }
 
   @Put('/:id')
@@ -43,11 +41,13 @@ export class PostController {
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.postServices.updatePost(postId, updatePostDto);
+    const post = this.postService.updatePost(postId, updatePostDto);
+
+    return post;
   }
 
   @Delete('/:id')
   deletePost(@Param('id') postId: string) {
-    return this.postServices.deletePost(postId);
+    this.postService.deletePost(postId);
   }
 }

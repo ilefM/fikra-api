@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -29,6 +29,10 @@ export class PostService {
       },
     });
 
+    if (!post) {
+      throw new NotFoundException("This post doesn't exist");
+    }
+
     return post;
   }
 
@@ -51,14 +55,22 @@ export class PostService {
       data: { author: this.DEFAULT_AUTHOR, ...updatePostDto },
     });
 
+    if (!post) {
+      throw new NotFoundException("This post doesn't exist");
+    }
+
     return post;
   }
 
   async deletePost(postId: string) {
-    await this.prismaService.post.delete({
+    const post = await this.prismaService.post.delete({
       where: {
         id: postId,
       },
     });
+
+    if (!post) {
+      throw new NotFoundException("This post doesn't exist");
+    }
   }
 }
