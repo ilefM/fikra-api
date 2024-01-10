@@ -5,8 +5,6 @@ import { PrismaModule } from './prisma/prisma.module';
 
 const ENV = process.env.NODE_ENV;
 
-console.log(ENV);
-
 @Module({
   imports: [
     ConfigModule.forRoot({
