@@ -1,12 +1,17 @@
-name: Deploy
+name: CD
 on:
   push:
     branches:
       - main
 
 jobs:
-  deploy:
+  deploy migrations:
     runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: production
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,6 +27,3 @@ jobs:
 
       - name: Apply all pending migrations to the database
         run: npx prisma migrate deploy
-
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}

@@ -9,7 +9,6 @@ const ENV = process.env.NODE_ENV;
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ENV ? '.env.development' : `.env.${ENV}`,
     }),
     PrismaModule,
     PostModule,
