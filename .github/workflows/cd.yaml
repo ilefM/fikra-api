@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  deploy migrations:
+  deploy-migrations:
     runs-on: ubuntu-latest
 
     env:
