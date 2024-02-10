@@ -26,8 +26,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Generating migrations files based on schema changes
-        run: npx prisma migrate save
-
       - name: Apply all pending migrations to the database
         run: npx prisma migrate deploy --preview-feature
