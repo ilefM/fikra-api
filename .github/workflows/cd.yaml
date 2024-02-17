@@ -5,8 +5,8 @@ on:
       - main
 
 jobs:
-  deploy-migrations:
-    name: Deploy postgres migrations to Supabase
+  apply-migrations:
+    name: Apply postgres migrations to Supabase
     runs-on: ubuntu-latest
 
     env:
@@ -26,5 +26,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Apply all pending migrations to the database
+      - name: Apply migrations to the database
         run: npx prisma migrate deploy --preview-feature
+
+  deploy-backend:
+    name: Deploy Fikra backend to Render
+    runs-on: ubuntu-latest
+
+    env:
+      DEPLOY_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+    steps:
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: curl "$DEPLOY_URL"
