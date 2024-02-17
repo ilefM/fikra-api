@@ -31,7 +31,7 @@ jobs:
 
   deploy-backend:
     name: Deploy Fikra backend to Render
-    depends-on: apply-migrations
+    needs: apply-migrations
     runs-on: ubuntu-latest
 
     env:
