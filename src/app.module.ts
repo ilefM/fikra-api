@@ -4,12 +4,6 @@ import { PostModule } from './post/post.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    PrismaModule,
-    PostModule,
-  ],
+  imports: [ConfigModule, PrismaModule, PostModule],
 })
 export class AppModule {}
