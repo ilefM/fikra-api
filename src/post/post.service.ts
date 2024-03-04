@@ -2,11 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { DEFAULT_AUTHOR } from '../utils/default-values';
 
 @Injectable()
 export class PostService {
-  DEFAULT_AUTHOR = 'binary_dev';
-
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllPosts() {
@@ -39,7 +38,7 @@ export class PostService {
   async createPost(createPostDto: CreatePostDto) {
     const post = await this.prismaService.post.create({
       data: {
-        author: this.DEFAULT_AUTHOR,
+        author: DEFAULT_AUTHOR,
         ...createPostDto,
       },
     });
@@ -52,7 +51,7 @@ export class PostService {
       where: {
         id: postId,
       },
-      data: { author: this.DEFAULT_AUTHOR, ...updatePostDto },
+      data: { author: DEFAULT_AUTHOR, ...updatePostDto },
     });
 
     if (!post) {
