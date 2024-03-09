@@ -9,16 +9,14 @@ describe('PostController', () => {
   let postController: PostController;
   let postService: PostService;
 
-  const dto: CreatePostDto = {
-    content: 'post created for test',
-  };
+  const content = 'post created for test';
 
   const mockPost = {
     id: randomUUID(),
     createdAt: Date.now(),
     updatedAt: Date.now(),
     author: DEFAULT_AUTHOR,
-    content: dto.content,
+    content: content,
   };
 
   const mockPostService = {
@@ -45,11 +43,10 @@ describe('PostController', () => {
   });
 
   describe('Create a post', () => {
-    it('should create a post', () => {
-      const result = postController.createPost(dto);
+    it('should create a post', async () => {
+      const result = await postController.createPost({ content });
 
       expect(result).toEqual(mockPost);
-
       expect(mockPostService.createPost).toHaveBeenCalled();
     });
 
@@ -59,8 +56,6 @@ describe('PostController', () => {
       };
 
       const response = await postController.createPost(dto);
-
-      console.log(response);
 
       expect(response).toEqual(400);
     });
