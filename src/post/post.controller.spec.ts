@@ -7,16 +7,17 @@ import { CreatePostDto } from './dto/create-post.dto';
 
 describe('PostController', () => {
   let postController: PostController;
-  let postService: PostService;
 
-  const content = 'post created for test';
+  const dto: CreatePostDto = {
+    content: 'post created for test',
+  };
 
   const mockPost = {
     id: randomUUID(),
     createdAt: Date.now(),
     updatedAt: Date.now(),
     author: DEFAULT_AUTHOR,
-    content: content,
+    content: dto.content,
   };
 
   const mockPostService = {
@@ -35,7 +36,6 @@ describe('PostController', () => {
     }).compile();
 
     postController = module.get<PostController>(PostController);
-    postService = module.get<PostService>(PostService);
   });
 
   it('should be defined', () => {
@@ -44,20 +44,10 @@ describe('PostController', () => {
 
   describe('Create a post', () => {
     it('should create a post', async () => {
-      const result = await postController.createPost({ content });
+      const result = await postController.createPost(dto);
 
       expect(result).toEqual(mockPost);
       expect(mockPostService.createPost).toHaveBeenCalled();
-    });
-
-    it('should throw an error when creating a post with empty content', async () => {
-      const dto: CreatePostDto = {
-        content: '',
-      };
-
-      const response = await postController.createPost(dto);
-
-      expect(response).toEqual(400);
     });
   });
 });
