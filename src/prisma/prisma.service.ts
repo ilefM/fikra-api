@@ -13,4 +13,14 @@ export class PrismaService extends PrismaClient {
       },
     });
   }
+
+  private async cleanDatabase() {
+    if (process.env.NODE_ENV !== 'test') {
+      throw new Error('You can only clean the database in a test environment');
+    }
+
+    const models = Reflect.ownKeys(this).filter((key) => key[0] !== '_');
+
+    return Promise.all(models.map((model) => this[model].deleteMany()));
+  }
 }
