@@ -22,7 +22,7 @@ export class PostController {
     return posts;
   }
 
-  @Get('/:id')
+  @Get(':id')
   getPostById(@Param('id') postId: string) {
     const post = this.postService.getPostById(postId);
 
@@ -36,7 +36,7 @@ export class PostController {
     return post;
   }
 
-  @Put('/:id')
+  @Put(':id')
   updatePost(
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -46,7 +46,7 @@ export class PostController {
     return post;
   }
 
-  @Delete('/:id')
+  @Delete(':id')
   deletePost(@Param('id') postId: string) {
     this.postService.deletePost(postId);
   }

@@ -39,8 +39,10 @@ export class PostService {
   async createPost(createPostDto: CreatePostDto) {
     const post = await this.prismaService.post.create({
       data: {
-        author: this.DEFAULT_AUTHOR,
-        ...createPostDto,
+        content: createPostDto.content,
+        author: {
+          connect: { username: this.DEFAULT_AUTHOR },
+        },
       },
     });
 
@@ -52,7 +54,10 @@ export class PostService {
       where: {
         id: postId,
       },
-      data: { author: this.DEFAULT_AUTHOR, ...updatePostDto },
+      data: {
+        author: { connect: { username: this.DEFAULT_AUTHOR } },
+        ...updatePostDto,
+      },
     });
 
     if (!post) {
