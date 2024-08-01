@@ -1,7 +1,7 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { PrismaClientExceptionFilter } from './exceptions/prisma-client-exception.filter';
+import { PrismaClientExceptionFilter } from './filters/prisma-client-exception.filter';
 
 const whitelist = ['http://localhost:5173', 'https://fikra.vercel.app'];
 
