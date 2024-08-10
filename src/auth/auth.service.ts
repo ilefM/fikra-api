@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './interfaces';
 import { GetUserTokens } from './dto/get-tokens.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -22,25 +23,34 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto): Promise<GetUserTokens> {
     const passwordHash = await argon.hash(signUpDto.password);
 
-    const user = await this.prismaService.user.create({
-      data: {
-        email: signUpDto.email,
-        username: signUpDto.username,
-        passwordHash,
-      },
-    });
+    try {
+      const user = await this.prismaService.user.create({
+        data: {
+          email: signUpDto.email,
+          username: signUpDto.username,
+          passwordHash,
+        },
+      });
 
-    const tokens = await this.signToken(user.id, user.username);
+      const tokens = await this.signToken(user.id, user.username);
 
-    await this.updateToken(user.id, tokens.refreshToken);
+      await this.updateToken(user.id, tokens.refreshToken);
 
-    const userTokens: GetUserTokens = {
-      userId: user.id,
-      username: user.username,
-      tokens,
-    };
+      const userTokens: GetUserTokens = {
+        userId: user.id,
+        username: user.username,
+        tokens,
+      };
 
-    return userTokens;
+      return userTokens;
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new UnauthorizedException('Credentials already taken');
+        }
+      }
+      throw e;
+    }
   }
 
   async singnIn(signInDto: SignInDto): Promise<GetUserTokens> {
