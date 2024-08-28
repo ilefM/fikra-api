@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './interfaces';
 import { GetUserTokens } from './dto/get-tokens.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -22,18 +23,29 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<GetUserTokens> {
     const passwordHash = await argon.hash(signUpDto.password);
+    let user: User;
 
     try {
-      const user = await this.prismaService.user.create({
+      user = await this.prismaService.user.create({
         data: {
           email: signUpDto.email,
           username: signUpDto.username,
           passwordHash,
         },
       });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new UnauthorizedException('Credentials already taken');
+        }
+      }
+      throw e;
+    }
 
+    try {
       const tokens = await this.signToken(user.id, user.username);
 
+      // create a refresh token in the database
       await this.updateToken(user.id, tokens.refreshToken);
 
       const userTokens: GetUserTokens = {
@@ -44,12 +56,13 @@ export class AuthService {
 
       return userTokens;
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === 'P2002') {
-          throw new UnauthorizedException('Credentials already taken');
-        }
-      }
-      throw e;
+      await this.prismaService.user.delete({
+        where: {
+          email: signUpDto.email,
+        },
+      });
+
+      throw new InternalServerErrorException('The server encountered an error');
     }
   }
 
@@ -77,15 +90,19 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const tokens = await this.signToken(user.id, user.username);
+    try {
+      const tokens = await this.signToken(user.id, user.username);
 
-    const userTokens: GetUserTokens = {
-      userId: user.id,
-      username: user.username,
-      tokens,
-    };
+      const userTokens: GetUserTokens = {
+        userId: user.id,
+        username: user.username,
+        tokens,
+      };
 
-    return userTokens;
+      return userTokens;
+    } catch (e) {
+      throw new InternalServerErrorException('The server encountered an error');
+    }
   }
 
   async refreshToken(userId: string, rt: string) {
@@ -152,13 +169,13 @@ export class AuthService {
   }
 
   private async updateToken(userId: string, rt: string) {
-    const hash = await argon.hash(rt);
+    const rtHash = await argon.hash(rt);
     await this.prismaService.user.update({
       where: {
         id: userId,
       },
       data: {
-        refreshHash: hash,
+        refreshHash: rtHash,
       },
     });
   }

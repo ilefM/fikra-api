@@ -25,8 +25,4 @@ export class SignUpDto {
     minSymbols: 1,
   })
   password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  bio: string;
 }
