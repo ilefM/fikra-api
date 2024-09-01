@@ -9,7 +9,7 @@ import * as argon from 'argon2';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Tokens } from './interfaces';
+import { JwtPayload, Tokens } from './interfaces';
 import { GetUserTokens } from './dto/get-tokens.dto';
 import { Prisma, User } from '@prisma/client';
 
@@ -43,7 +43,7 @@ export class AuthService {
     }
 
     try {
-      const tokens = await this.signToken(user.id, user.username);
+      const tokens = await this.signToken(user.id, user.email);
 
       // create a refresh token in the database
       await this.updateToken(user.id, tokens.refreshToken);
@@ -91,7 +91,9 @@ export class AuthService {
     }
 
     try {
-      const tokens = await this.signToken(user.id, user.username);
+      const tokens = await this.signToken(user.id, user.email);
+
+      await this.updateToken(user.id, tokens.refreshToken);
 
       const userTokens: GetUserTokens = {
         userId: user.id,
@@ -145,6 +147,16 @@ export class AuthService {
         refreshHash: null,
       },
     });
+  }
+
+  async isTokenValid(payload: JwtPayload): Promise<boolean> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email: payload.email,
+      },
+    });
+
+    return user.refreshHash !== null;
   }
 
   private async signToken(userId: string, email: string): Promise<Tokens> {

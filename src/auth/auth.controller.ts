@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('signin')
-  async SignInDto(@Body() signInDto: SignInDto, @Res() res: Response) {
+  async SignIn(@Body() signInDto: SignInDto, @Res() res: Response) {
     const userTokens = await this.authService.singnIn(signInDto);
 
     this.setCookies(res, userTokens.tokens);
@@ -51,17 +51,14 @@ export class AuthController {
     const tokens = await this.authService.refreshToken(userId, refreshToken);
 
     this.setCookies(res, tokens);
-
-    res.sendStatus(HttpStatus.OK);
   }
 
   @UseGuards(AtGuard)
   @Post('signout')
-  async signout(@GetCurrentUserId() userId: string, @Res() res: Response) {
+  async signOut(@GetCurrentUserId() userId: string, @Res() res: Response) {
     await this.authService.signOut(userId);
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    res.sendStatus(HttpStatus.OK);
   }
 
   private setCookies(res: Response, tokens: Tokens) {
