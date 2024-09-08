@@ -51,6 +51,8 @@ export class AuthController {
     const tokens = await this.authService.refreshToken(userId, refreshToken);
 
     this.setCookies(res, tokens);
+
+    res.sendStatus(200);
   }
 
   @UseGuards(AtGuard)
@@ -59,6 +61,7 @@ export class AuthController {
     await this.authService.signOut(userId);
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
+    res.sendStatus(200);
   }
 
   private setCookies(res: Response, tokens: Tokens) {
