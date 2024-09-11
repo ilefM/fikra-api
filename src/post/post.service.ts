@@ -14,8 +14,8 @@ export class PostService {
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
-        author: true,
         content: true,
+        authorUsername: true,
       },
     });
 
