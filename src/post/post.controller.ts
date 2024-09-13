@@ -11,8 +11,8 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
-@Controller('/posts')
-export class PostController {
+@Controller('sposts')
+export class ostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
