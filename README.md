@@ -13,8 +13,6 @@
 
 <h4>Post:</h4>
 
-- CRUD operations
-- object post `{id: string, createdAt: Date, author: string, content: string}`
+- CRUD operations on posts
+- object post `{id: string, createdAt: Date, updatedAt: Date, content: string, authorUsername: User}`
 - No need of author field in dto class when creating and updating a post
-- The author field is hardcoded to `binary_dev` (will change after adding the auth feature)
-- [] TODO: fetching the userId from the user connected to get the author of the post
