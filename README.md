@@ -15,4 +15,3 @@
 
 - CRUD operations on posts
 - object post `{id: string, createdAt: Date, updatedAt: Date, content: string, authorUsername: User}`
-- No need of author field in dto class when creating and updating a post
