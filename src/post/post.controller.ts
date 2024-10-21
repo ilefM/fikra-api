@@ -12,6 +12,7 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AtGuard } from '../guards';
+import { GetCurrentUserId } from '../decorators';
 
 @Controller('posts')
 export class PostController {
@@ -33,8 +34,11 @@ export class PostController {
 
   @UseGuards(AtGuard)
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto) {
-    const post = this.postService.createPost(createPostDto);
+  createPost(
+    @GetCurrentUserId() userId: string,
+    @Body() createPostDto: CreatePostDto,
+  ) {
+    const post = this.postService.createPost(createPostDto, userId);
 
     return post;
   }

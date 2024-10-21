@@ -1,12 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostService {
-  DEFAULT_AUTHOR = 'binary_dev';
-
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllPosts() {
@@ -36,12 +38,25 @@ export class PostService {
     return post;
   }
 
-  async createPost(createPostDto: CreatePostDto) {
+  async createPost(createPostDto: CreatePostDto, userId: string) {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        username: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('No authorized to create a post');
+    }
+
     const post = await this.prismaService.post.create({
       data: {
         content: createPostDto.content,
         author: {
-          connect: { username: this.DEFAULT_AUTHOR },
+          connect: { username: user.username },
         },
       },
     });
@@ -55,7 +70,6 @@ export class PostService {
         id: postId,
       },
       data: {
-        author: { connect: { username: this.DEFAULT_AUTHOR } },
         ...updatePostDto,
       },
     });
