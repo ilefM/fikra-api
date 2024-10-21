@@ -6,10 +6,12 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { AtGuard } from '../guards';
 
 @Controller('posts')
 export class PostController {
@@ -29,6 +31,7 @@ export class PostController {
     return post;
   }
 
+  @UseGuards(AtGuard)
   @Post()
   createPost(@Body() createPostDto: CreatePostDto) {
     const post = this.postService.createPost(createPostDto);
@@ -36,6 +39,7 @@ export class PostController {
     return post;
   }
 
+  @UseGuards(AtGuard)
   @Put(':id')
   updatePost(
     @Param('id') postId: string,
@@ -46,6 +50,7 @@ export class PostController {
     return post;
   }
 
+  @UseGuards(AtGuard)
   @Delete(':id')
   deletePost(@Param('id') postId: string) {
     this.postService.deletePost(postId);
