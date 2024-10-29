@@ -54,4 +54,21 @@ export class UsersService {
       },
     });
   }
+
+  async getUserPosts(userId: string) {
+    const userPosts = await this.prismaService.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        posts: true,
+      },
+    });
+
+    if (!userPosts) {
+      throw new NotFoundException("This user doesn't exist");
+    }
+
+    return userPosts.posts;
+  }
 }
