@@ -65,6 +65,10 @@ export class UsersService {
       },
     });
 
+    if (!userPosts) {
+      throw new NotFoundException("This user doesn't exist");
+    }
+
     return userPosts.posts;
   }
 }
