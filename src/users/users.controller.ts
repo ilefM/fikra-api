@@ -34,4 +34,11 @@ export class UsersController {
   deleteUser(@Param('id') userId: string) {
     this.usersService.deleteUser(userId);
   }
+
+  @Get(':id/posts')
+  getUserPosts(@Param('id') userId: string) {
+    const posts = this.usersService.getUserPosts(userId);
+
+    return posts;
+  }
 }

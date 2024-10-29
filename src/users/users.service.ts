@@ -54,4 +54,17 @@ export class UsersService {
       },
     });
   }
+
+  async getUserPosts(userId: string) {
+    const userPosts = await this.prismaService.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        posts: true,
+      },
+    });
+
+    return userPosts.posts;
+  }
 }
