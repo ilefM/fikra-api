@@ -46,17 +46,18 @@ export class PostController {
   @UseGuards(AtGuard)
   @Put(':id')
   updatePost(
+    @GetCurrentUserId() userId: string,
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    const post = this.postService.updatePost(postId, updatePostDto);
+    const post = this.postService.updatePost(userId, postId, updatePostDto);
 
     return post;
   }
 
   @UseGuards(AtGuard)
   @Delete(':id')
-  deletePost(@Param('id') postId: string) {
-    this.postService.deletePost(postId);
+  deletePost(@GetCurrentUserId() userId: string, @Param('id') postId: string) {
+    this.postService.deletePost(userId, postId);
   }
 }

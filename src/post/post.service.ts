@@ -6,6 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post } from '@prisma/client';
 
 @Injectable()
 export class PostService {
@@ -64,32 +65,68 @@ export class PostService {
     return post;
   }
 
-  async updatePost(postId: string, updatePostDto: UpdatePostDto) {
-    const post = await this.prismaService.post.update({
+  async updatePost(
+    userId: string,
+    postId: string,
+    updatePostDto: UpdatePostDto,
+  ) {
+    const user = await this.prismaService.user.findFirst({
       where: {
-        id: postId,
-      },
-      data: {
-        ...updatePostDto,
+        id: userId,
       },
     });
 
-    if (!post) {
-      throw new NotFoundException("This post doesn't exist");
+    if (!user) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this post',
+      );
     }
 
-    return post;
+    let postUpdated: Post;
+
+    try {
+      postUpdated = await this.prismaService.post.update({
+        where: {
+          id: postId,
+          authorUsername: user.username,
+        },
+        data: {
+          ...updatePostDto,
+        },
+      });
+    } catch (_) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this post',
+      );
+    }
+
+    return postUpdated;
   }
 
-  async deletePost(postId: string) {
-    const post = await this.prismaService.post.delete({
+  async deletePost(userId: string, postId: string) {
+    const user = await this.prismaService.user.findFirst({
       where: {
-        id: postId,
+        id: userId,
       },
     });
 
-    if (!post) {
-      throw new NotFoundException("This post doesn't exist");
+    if (!user) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this post',
+      );
+    }
+
+    try {
+      await this.prismaService.post.delete({
+        where: {
+          id: postId,
+          authorUsername: user.username,
+        },
+      });
+    } catch (_) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this post',
+      );
     }
   }
 }
