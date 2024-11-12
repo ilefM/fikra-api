@@ -19,10 +19,10 @@ export class SignUpDto {
   @IsNotEmpty()
   @IsStrongPassword({
     minLength: 8,
-    minLowercase: 1,
-    minUppercase: 1,
-    minNumbers: 1,
-    minSymbols: 1,
+    minLowercase: 0,
+    minUppercase: 0,
+    minNumbers: 0,
+    minSymbols: 0,
   })
   password: string;
 }
