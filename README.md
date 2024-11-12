@@ -14,4 +14,10 @@
 <h4>Post:</h4>
 
 - CRUD operations on posts
-- object post `{id: string, createdAt: Date, updatedAt: Date, content: string, authorUsername: User}`
+- Object post `{id: string, createdAt: Date, updatedAt: Date, content: string, authorUsername: User}`
+
+<h4>User:</h4>
+
+- Sign In
+- Sign Up
+- Object user `{id: string, createdAt: Date, updatedAt: Date, email: string, username: string, passwordHash: string, refreshHash: string, role: {USER | ADMIN}, bio: string, posts: POST[]}`
