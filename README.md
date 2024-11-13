@@ -7,7 +7,7 @@
 - Nestjs
 - Typescript
 - Postgres
-- Railway
+- Render
 
 <h3>Features</h3>
 
